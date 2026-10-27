@@ -1,0 +1,520 @@
+{
+  "author": "SASU JAK MOOH",
+  "cloudEndpoint": "https://nlocale.fr/mcp",
+  "description": "Read-only MCP server for the NLocale guide to Aisne, France: sourced events, places, restaurants, stays and local authorities, in six languages.",
+  "homepage": "https://nlocale.fr",
+  "icon": "https://nlocale.fr/logo.svg",
+  "identifier": "nlocale",
+  "name": "NLocale",
+  "prompts": [],
+  "resources": [],
+  "tags": [
+    "travel",
+    "tourism",
+    "events",
+    "local-guide",
+    "aisne",
+    "france",
+    "multilingual",
+    "read-only"
+  ],
+  "tools": [
+    {
+      "name": "rechercher_etablissements",
+      "title": "Rechercher des établissements",
+      "description": "Recherche dans les fiches publiques NLocale. Les dates de vérification et le statut décrivent les contrôles réellement effectués.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "categorie": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "commune": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Rechercher des établissements",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rechercher_evenements",
+      "title": "Rechercher des événements",
+      "description": "Événements publiés et actifs de l’agenda NLocale, avec leurs occurrences. Les tarifs renseignés ne constituent pas un devis.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "categorie": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "commune": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "date_debut": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "date_fin": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "periode": {
+            "default": "a_venir",
+            "type": "string",
+            "enum": [
+              "a_venir",
+              "archives",
+              "tous"
+            ]
+          },
+          "gratuit": {
+            "type": "boolean"
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Rechercher des événements",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "chercher_sorties",
+      "title": "Chercher des sorties sourcées",
+      "description": "Alias stable de rechercher_evenements : commune, dates, catégorie, gratuité explicitement connue et langue. Les résultats comprennent les références des fiches publiques et leurs sources.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "categorie": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "commune": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "date_debut": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "date_fin": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "periode": {
+            "default": "a_venir",
+            "type": "string",
+            "enum": [
+              "a_venir",
+              "archives",
+              "tous"
+            ]
+          },
+          "gratuit": {
+            "type": "boolean"
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Chercher des sorties sourcées",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "agenda_weekend",
+      "title": "Préparer le week-end dans l’Aisne",
+      "description": "Sélection de rendez-vous publiés du vendredi au dimanche, calculée à la date actuelle de Paris. Secteur : Laon, Saint-Quentin, Soissons, Château-Thierry, Chauny, Hirson ou Villers-Cotterêts. Ne contient aucune promesse de maintien ni réservation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "secteur": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 5,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Préparer le week-end dans l’Aisne",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rechercher_collectivites",
+      "title": "Rechercher des collectivités",
+      "description": "Informations institutionnelles approuvées et publiées. Français, anglais, allemand, néerlandais, italien ou espagnol ; la langue réellement disponible est indiquée. Aucune statistique, donnée d’inscription ou information privée.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "insee_code": {
+            "type": "string",
+            "pattern": "^[0-9A-Z]{5}$"
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Rechercher des collectivités",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rechercher_contenus_publics",
+      "title": "Rechercher guides, FAQ, méthode et offres NLocale",
+      "description": "Contenus réellement publiés dans la langue demandée : FAQ, sources, méthode, offres et conditions publiques. Chaque résultat comprend une référence vers le détail public et son lien.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "categorie": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "commune": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Rechercher guides, FAQ, méthode et offres NLocale",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rechercher_lieux",
+      "title": "Rechercher des lieux documentés",
+      "description": "Patrimoine et lieux dont les faits publics sont documentés. Une vérification documentaire ne constitue pas une visite.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "categorie": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "commune": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Rechercher des lieux documentés",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "lire_fiche_publique",
+      "title": "Lire une fiche publique et ses sources",
+      "description": "Détails factuels de la clé retournée par une recherche, après vérification de la publication actuelle. La réponse comprend le lien NLocale et les sources originales, avec des champs distincts pour la récupération, la validation documentaire, l’identité et la visite.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 250,
+            "pattern": "^(event|business|municipality|place|content):[a-zA-Z0-9-]+$"
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Lire une fiche publique et ses sources",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rechercher_articles_carnet",
+      "title": "Rechercher les articles publiés du Carnet",
+      "description": "Rencontres, coulisses et récits publiés par NLocale dans la langue demandée, avec auteur réel, sources et dates. Français, anglais, allemand, néerlandais, italien et espagnol. Aucun brouillon ni remplacement par une autre langue. Les slugs retournés donnent accès aux articles détaillés.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Rechercher les articles publiés du Carnet",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "lire_article_carnet",
+      "title": "Lire un article publié du Carnet",
+      "description": "Version actuellement publique de l’article dans la langue demandée, avec auteur, sources, statut de visite et éventuel partenariat. La réponse comprend le lien NLocale localisé et la signature publiée, distincte de l’identité des personnes interviewées.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "maxLength": 180,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "langue": {
+            "default": "fr",
+            "type": "string",
+            "enum": [
+              "fr",
+              "en",
+              "de",
+              "nl",
+              "it",
+              "es"
+            ]
+          }
+        },
+        "required": [
+          "slug"
+        ],
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Lire un article publié du Carnet",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "version": "0.2.0"
+}
